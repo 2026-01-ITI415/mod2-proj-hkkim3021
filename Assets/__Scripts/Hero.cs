@@ -102,7 +102,7 @@ public class Hero : MonoBehaviour
         lastTriggerGo = go;                                                   // d
 
         Enemy enemy = go.GetComponent<Enemy>();                               // e
-        PowerUp pUp = go.GetComponent<PowerUp>();
+        PowerUp pUp = other.GetComponentInParent<PowerUp>();
 
         if (enemy != null)
         {  // If the shield was triggered by an enemy

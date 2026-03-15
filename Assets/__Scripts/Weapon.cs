@@ -52,6 +52,8 @@ public class WeaponDefinition
 
 public class Weapon : MonoBehaviour
 {
+    public GameObject laserPrefab;
+    private GameObject activeLaser;
     static public Transform PROJECTILE_ANCHOR;
 
     [Header("Dynamic")]                                                        // a
@@ -119,7 +121,7 @@ public class Weapon : MonoBehaviour
         // If it hasn’t been enough time between shots, return
         if (Time.time < nextShotTime) return;                              // j
 
-        ProjectileHero p;
+        ProjectileHero p = null;
         Vector3 vel = Vector3.up * def.velocity;
 
         switch (type)
@@ -140,6 +142,48 @@ public class Weapon : MonoBehaviour
                 p.vel = p.transform.rotation * vel;
                 break;
 
+            case eWeaponType.phaser:
+            p = MakeProjectile();
+            p.transform.position += Vector3.left * 0.25f;
+            p.vel = vel;
+            p = MakeProjectile();
+            p.transform.position += Vector3.right * 0.25f;
+            p.vel = vel;
+            break;
+            
+            case eWeaponType.laser:
+                if (activeLaser == null)
+                {
+                    ProjectileHero laser = MakeProjectile();
+                    activeLaser = laser.gameObject;
+
+                    // make beam tall
+                    laser.transform.localScale = new Vector3(0.3f, 30f, 0.3f);
+
+                    // position above ship
+                    Vector3 pos = transform.position;
+                    pos.y += 15f;
+                    laser.transform.position = pos;
+
+                    laser.vel = Vector3.zero;
+                }
+                break;
+        }
+    }
+
+    void Update()
+    {
+        // If player releases space, destroy the laser
+        if (type == eWeaponType.laser)
+        {
+            if (!Input.GetKey(KeyCode.Space))
+            {
+                if (activeLaser != null)
+                {
+                    Destroy(activeLaser);
+                    activeLaser = null;
+                }
+            }
         }
     }
 

@@ -57,6 +57,21 @@ public class Enemy : MonoBehaviour
         pos = tempPos;
     }
 
+    public void TakeDamage(float dmg)
+    {   
+        health -= dmg;
+
+        if (health <= 0)
+        {
+            if (!calledShipDestroyed)
+            {
+                calledShipDestroyed = true;
+                Main.SHIP_DESTROYED(this);
+            }
+            Destroy(this.gameObject);
+    }
+}
+
     void OnCollisionEnter(Collision coll)
     {
         GameObject otherGO = coll.gameObject;
